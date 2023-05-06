@@ -1,48 +1,50 @@
-# Building recovery online made easy #
+# Building Recovery Online Made Easy #
 
-## Important notice ##
+## Important Notice ##
 ### Users reported build errors forking to own account. ###
 ### To fix this, create a new organization, fork to the new organization. This fixes the problem, for now.
 
-## Important notice 2 ##
-### I realized that some recovery trees has prebuilt kernels, which makes this basically useless. ###
-### If your recovery tree has prebuilt kernel, move to [this](https://github.com/Area69Lab/Recovery-Builder-NoKernel) ###
-
-#### What this is ####
+#### What This Is ####
 
 This is an easy way for recovery maintainers or anyone who's interested in building recoveries to finish their dream without a server.
 
 This works with GitHub actions, thank GitHub not me.
 
-#### How to use ####
+#### How To Use ####
 
 Here are some useful notes to using this tool brewed with black magic.
 
 1. Fork the repo to a organization
 
-2. Set the variables, as listed below.
+2. Go to action
 
-Update : If you don't understand the manifest command, check [this](https://github.com/Area69Lab/Recovery-builder/blob/master/guide.md)
+3. Select "Building recovery" Workflow
 
-Some variables that you'd like to set:
+4. Enter the variables which are mentioned
 
-```MANIFEST : Link to your recovery manifest, Google it if you don't know what this is```
+```MANIFEST : Link For Minimal Recovery Manifest; default is twrp minimal manifest```
 
-```DEVICE : Most likely your device codename, e.g. rosy, sakura, curtana, etc.```
+```MANIFEST_BRANCH : Enter Manifest Branch Would You Like To Sync like, e.g. twrp-11```
 
-```DT_LINK : Link to your recovery device tree.```
+```DT_LINK : Enter Link For Your Device Tree With Branch Like $URL -b BRANCH```
 
-```DT_PATH : Path to clone your device tree ```
+```VENDOR : Enter Your Device OEM, e.g. motorola, asus, xiaomi, etc.```
 
-```KERNEL_LINK : Link to your device kernel source ```
+```DEVICE : Enter Your Device Code Name, e.g. rosy, sakura, curtana, etc.```
 
-```KERNEL_PATH : Path to clone your kernel tree ```
+```LUNCHCMD : Enter Lunch Command like lunch omni_$device-eng or lunch twrp_$device-eng```
 
-```TARGET : recoveryimage or bootimage, depending on if your phone has a recovery partition or not ```
+```BUILDCMD : Enter Build Command m recoveryimage or m bootimage```
 
-3. Go to actions tab, enable workflows.
+Optional, If you are you using prebuilt kernel then Don't Enter Kernel Source
 
-4. Star the repo, go to actions tab again, and let black magic go brrr.
+```KERNEL_LINK : Link For Your Kernel Source With Branch Like $URL -b BRANCH```
+
+```KERNEL_PATH : Path Where You To Clone Your Kernel Source```
+
+5. Click On "Run Workflow"
+
+6. Star the repo, go to actions tab again, and let black magic go brrr.
 
 If you don't know any of these, **Ask [Google](https://www.google.com) or someone who builds recoveries**, I don't provide TWRP building support.
 
