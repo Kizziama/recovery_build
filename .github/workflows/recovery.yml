@@ -31,6 +31,10 @@ on:
         description: 'Enter Build Command m recoveryimage or m bootimage'
         required: true
         default: 'mka recoveryimage'
+      TWVer:
+        description: 'Enter TW_DEVICE_VERSION'
+        required: true
+        default: 'test'
 
 env:
   MANIFEST: ${{ github.event.inputs.ManifestLink }}
@@ -43,6 +47,8 @@ env:
   LUNCHCMD: ${{ github.event.inputs.LunchCMD }}
   BUILDCMD: ${{ github.event.inputs.BuildCMD }}
   TZ: Asia/Kolkata
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  TW_DEVICE_VERSION: ${{ github.event.inputs.TWVer }}
 
 jobs:
   build:
@@ -71,11 +77,39 @@ jobs:
        - name: Build
          run: |
               cd work
-              . build/envsetup.sh && $LUNCHCMD && export ALLOW_MISSING_DEPENDENCIES=true && $BUILDCMD
+              . build/envsetup.sh && $LUNCHCMD && export ALLOW_MISSING_DEPENDENCIES=true && export TW_DEVICE_VERSION=$(echo "$TW_DEVICE_VERSION") && $BUILDCMD
              
-       - name: Uploading recovery image
+       - name: Github Release
          run: |
-              cd work/out/target/product/$DEVICE
-              curl -sL https://git.io/file-transfer | sh
-              ./transfer wet recovery.img
-              ./transfer wet *.zip
+           cd work
+           printf "Adding latest stable ghr binary...\n"
+           curl -s https://api.github.com/repos/tcnksm/ghr/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("linux_amd64")) | .browser_download_url' | wget -qi -
+           tar -xzf ghr_*_amd64.tar.gz --wildcards 'ghr*/ghr' --strip-components 1 && rm -rf ghr_*_amd64.tar.gz
+           chmod a+x ./ghr && sudo mv ./ghr /usr/local/bin/
+
+           printf "Exporting Vars..\n"
+
+           export UPLOAD_PATH=$(pwd)/out/target/product/${DEVICE}/upload
+           export BUILD_ZIP=$(find $(pwd)/out/target/product/${DEVICE}/*.zip 2>/dev/null)
+           export BUILD_IMG=$(find $(pwd)/out/target/product/${DEVICE}/*.img 2>/dev/null)
+           export BUILD_FILE_TAR=$(find $WORKDIR/out/target/product/${DEVICE}/*.tar 2>/dev/null)
+
+           mkdir -p ${UPLOAD_PATH}
+           # Copy Required Files
+           if [[ ! -z ${BUILD_ZIP} ]]; then
+               cp $BUILD_ZIP $UPLOAD_PATH
+           fi
+           cp $BUILD_IMG $UPLOAD_PATH
+
+           # If Samsung's Odin TAR available, copy it to our upload dir
+           if [[ ! -z ${BUILD_FILE_TAR} ]]; then
+               echo "Samsung's Odin Tar available: $BUILD_FILE_TAR"
+               cp ${BUILD_FILE_TAR} ${UPLOAD_PATH}
+           fi
+
+           export GH_USER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+           export GH_REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+           export GH_SHA="${{ github.sha }}"
+           export VERSION=$(echo "$TW_DEVICE_VERSION")
+           printf "Final Release..\n"
+           ghr -t ${GH_TOKEN} -u ${GH_USER} -r ${GH_REPO} -n "Release for $(echo $DEVICE)" -b "$(echo $VERSION)" -c ${GH_SHA} -delete ${VERSION} ${UPLOAD_PATH}
