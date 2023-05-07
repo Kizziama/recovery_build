@@ -36,6 +36,10 @@ Here are some useful notes to using this tool brewed with black magic.
 
 ```BUILDCMD : Enter Build Command m recoveryimage or m bootimage```
 
+```TW_DEVICE_VERSION : Set Custom Build Version```
+
+```GH_TOKEN : Add GitHub Token in Secret Environment```
+
 Optional, If you are you using prebuilt kernel then Don't Enter Kernel Source
 
 ```KERNEL_LINK : Link For Your Kernel Source With Branch Like $URL -b BRANCH```
