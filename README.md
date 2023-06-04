@@ -46,6 +46,8 @@ Optional, If you are you using prebuilt kernel then Don't Enter Kernel Source
 
 ```KERNEL_PATH : Path Where You To Clone Your Kernel Source```
 
+```EXTRA_CMD : Add Extra Commands To Run Before Build Start```
+
 5. Click On "Run Workflow"
 
 6. Star the repo, go to actions tab again, and let black magic go brrr.

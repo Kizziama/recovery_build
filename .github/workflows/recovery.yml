@@ -35,6 +35,8 @@ on:
         description: 'Enter TW_DEVICE_VERSION'
         required: true
         default: 'test'
+      ExtraCMD:
+        description: 'Extra Commands To Run Before Build'
 
 env:
   MANIFEST: ${{ github.event.inputs.ManifestLink }}
@@ -46,9 +48,10 @@ env:
   KERNEL_PATH: ${{ github.event.inputs.KernelPath }}
   LUNCHCMD: ${{ github.event.inputs.LunchCMD }}
   BUILDCMD: ${{ github.event.inputs.BuildCMD }}
-  TZ: Asia/Kolkata
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
   TW_DEVICE_VERSION: ${{ github.event.inputs.TWVer }}
+  EXTRA_CMD: ${{ github.event.inputs.ExtraCMD }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  TZ: Asia/Kolkata
 
 jobs:
   build:
@@ -65,14 +68,33 @@ jobs:
             sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
             sudo chmod a+rx /usr/local/bin/repo
 
-       - name: Sync recovery source and device tree
+       - name: Sync Recovery Source
          run: |
              mkdir work
              cd work
              repo init -u $MANIFEST -b $MANIFEST_BRANCH --depth=1 --groups=all,-notdefault,-device,-darwin,-x86,-mips
              repo sync -j4
+
+       - name: Clone Device Trees
+         run: |
+             cd work
+             printf "Cloning Device Tree..\n"
              git clone $DT_LINK --depth=1 --single-branch device/$VENDOR/$DEVICE
-             if [[ ! -z "$KERNEL_LINK" ]]; then git clone $KERNEL_LINK --depth=1 --single-branch $KERNEL_PATH; fi
+             if [[ ! -z "$KERNEL_LINK" ]]; then
+                 printf "Cloning Kernel Source..\n"
+                 git clone $KERNEL_LINK --depth=1 --single-branch $KERNEL_PATH
+             fi
+
+       - name: Extra Command
+         run: |
+              cd work
+              if [[ ! -z "$EXTRA_CMD" ]]; then
+                  printf "Executing Extra Commands..\n"
+                  eval "${EXTRA_CMD}" || { printf "Failed While Executing Extra Commands.\n"; exit 1; }
+                  cd ~/work  || exit
+              else
+                  printf "No Extra Commands To Execute..\n"
+              fi
 
        - name: Build
          run: |
