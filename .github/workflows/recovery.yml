@@ -19,10 +19,6 @@ on:
       Device:
         description: 'Enter Your Device Code Name'
         required: true
-      KernelLink:
-        description: 'Link For Your Kernel Source With Branch Like URL -b BRANCH'
-      KernelPath:
-        description: 'Path Where You To Clone Your Kernel Source'
       LunchCMD:
         description: 'Enter Lunch Command like lunch omni_$device-eng or lunch twrp_$device-eng'
         required: true
@@ -44,8 +40,6 @@ env:
   DT_LINK: ${{ github.event.inputs.DTLink }}
   VENDOR: ${{ github.event.inputs.Vendor }}
   DEVICE: ${{ github.event.inputs.Device }}
-  KERNEL_LINK: ${{ github.event.inputs.KernelLink }}
-  KERNEL_PATH: ${{ github.event.inputs.KernelPath }}
   LUNCHCMD: ${{ github.event.inputs.LunchCMD }}
   BUILDCMD: ${{ github.event.inputs.BuildCMD }}
   TW_DEVICE_VERSION: ${{ github.event.inputs.TWVer }}
@@ -80,10 +74,6 @@ jobs:
              cd work
              printf "Cloning Device Tree..\n"
              git clone $DT_LINK --depth=1 --single-branch device/$VENDOR/$DEVICE
-             if [[ ! -z "$KERNEL_LINK" ]]; then
-                 printf "Cloning Kernel Source..\n"
-                 git clone $KERNEL_LINK --depth=1 --single-branch $KERNEL_PATH
-             fi
 
        - name: Extra Command
          run: |

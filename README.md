@@ -40,11 +40,7 @@ Here are some useful notes to using this tool brewed with black magic.
 
 ```GH_TOKEN : Add GitHub Token in Secret Environment```
 
-Optional, If you are you using prebuilt kernel then Don't Enter Kernel Source
-
-```KERNEL_LINK : Link For Your Kernel Source With Branch Like $URL -b BRANCH```
-
-```KERNEL_PATH : Path Where You To Clone Your Kernel Source```
+Optional
 
 ```EXTRA_CMD : Add Extra Commands To Run Before Build Start```
 
