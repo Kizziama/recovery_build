@@ -67,7 +67,7 @@ jobs:
              mkdir work
              cd work
              repo init -u $MANIFEST -b $MANIFEST_BRANCH --depth=1 --groups=all,-notdefault,-device,-darwin,-x86,-mips
-             repo sync -j4
+             repo sync -j$(nproc --all)
 
        - name: Clone Device Trees
          run: |
@@ -94,7 +94,7 @@ jobs:
        - name: Build
          run: |
               cd work
-              . build/envsetup.sh && $LUNCHCMD && export ALLOW_MISSING_DEPENDENCIES=true && export TW_DEVICE_VERSION=$(echo "$TW_DEVICE_VERSION") && $BUILDCMD
+              . build/envsetup.sh && $LUNCHCMD && export ALLOW_MISSING_DEPENDENCIES=true && export TW_DEVICE_VERSION=$(echo "$TW_DEVICE_VERSION") && $BUILDCMD -j$(nproc --all)
              
        - name: Github Release
          run: |
