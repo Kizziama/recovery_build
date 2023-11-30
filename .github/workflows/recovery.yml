@@ -56,17 +56,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-       - name: Maximize build space
-         uses: easimon/maximize-build-space@master
-         with:
-            root-reserve-mb: 512
-            swap-size-mb: 1024
-            overprovision-lvm: true
-            remove-dotnet: true
-            remove-android: true
-            remove-codeql: true
-            remove-haskell: true
-            remove-docker-images: true
+       - name: Cleaning Up Runner
+         uses: rokibhasansagar/slimhub_actions@main
           
        - name: Initializing environment
          run: |
