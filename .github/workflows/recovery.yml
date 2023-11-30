@@ -10,27 +10,31 @@ on:
       ManifestBranch:
         description: 'Which Branch Would You Like To Sync'
         required: true
+        default: "twrp-12.1"
       DTLink:
         description: 'Link For Your Device Tree With Branch Like URL -b BRANCH'
         required: true
+        default: "https://github.com/xiaomi-fire-devs/device_xiaomi_fire-twrp -b twrp-12.1"
       Vendor:
         description: 'Enter Your Device OEM'
         required: true
+        default: "xiaomi"
       Device:
         description: 'Enter Your Device Code Name'
         required: true
+        default: "fire"
       LunchCMD:
         description: 'Enter Lunch Command like lunch omni_$device-eng or lunch twrp_$device-eng'
         required: true
-        default: 'lunch twrp_$DEVICE-eng'
+        default: 'lunch twrp_fire-eng'
       BuildCMD:
         description: 'Enter Build Command m recoveryimage or m bootimage'
         required: true
-        default: 'mka recoveryimage'
+        default: 'mka bootimage'
       TWVer:
         description: 'Enter TW_DEVICE_VERSION'
         required: true
-        default: 'test'
+        default: 'twrp-12.1'
       ExtraCMD:
         description: 'Extra Commands To Run Before Build'
 
@@ -52,9 +56,18 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-       - name: Cleaning Up Runner
-         uses: rokibhasansagar/slimhub_actions@main
-
+       - name: Maximize build space
+         uses: easimon/maximize-build-space@master
+         with:
+            root-reserve-mb: 512
+            swap-size-mb: 1024
+            overprovision-lvm: true
+            remove-dotnet: true
+            remove-android: true
+            remove-codeql: true
+            remove-haskell: true
+            remove-docker-images: true
+          
        - name: Initializing environment
          run: |
             sudo -E apt-get -qq update
